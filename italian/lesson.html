@@ -23,7 +23,8 @@ ENGLISH_VERBS = [
 'know',
 'think',
 'take',
-'see'
+'see',
+'drink'
 ];
 
 ITALIAN_VERBS = [
@@ -36,7 +37,7 @@ ITALIAN_VERBS = [
 ['sapere', true],
 ['pensare', false],
 ['prendere', false],
-['vedere', true]
+['vedere', false],
 ['bere', true]
 ];
 
@@ -49,10 +50,20 @@ IRREGULAR_CONJUGATIONS = {
 };
 
         const PRONOUNS = ['I', 'you', 'he/she', 'we', 'you (plural)', 'they']
-        const suffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
+        const areSuffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
+        const ereSuffixes = ['o', 'i', 'e', 'iamo', 'ete', 'ono']
         function checkAnswer(verbIndex, pronounIndex, answer) {
             const [verb, irregular] = ITALIAN_VERBS[verbIndex] 
-            const verbWithoutSuffix = verb.replace(/are$/, '')
+            let verbWithoutSuffix;
+            let suffixes;
+            if (verb.match(/are$/)) {
+                verbWithoutSuffix = verb.replace(/are$/, '')
+                suffixes = areSuffixes
+            }
+            if (verb.match(/ere$/)) {
+                verbWithoutSuffix = verb.replace(/ere$/, '')
+                suffixes = ereSuffixes
+            }
             let expectedAnswer = verbWithoutSuffix + suffixes
             [pronounIndex]
             if (irregular) {
@@ -88,7 +99,7 @@ IRREGULAR_CONJUGATIONS = {
             
             </dl>
             <form @submit.prevent="check()">
-                <input required="required" class="input" type="text" x-model="answer" placeholder="your answer here...">
+                <input required="required" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" class="input" type="text" x-model="answer" placeholder="your answer here...">
                 <button class="button is-info mt-2" type="submit">check answer</button>
             </form>
             <footer class="mt-2">
