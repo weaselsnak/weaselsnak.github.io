@@ -1,0 +1,100 @@
+<!doctype html>
+<head>
+<title>Italian Practice</title>
+<link rel="apple-touch-icon" href="/italian/italian-icon.png">
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bulma@1.0.0/css/bulma.min.css"
+/>
+</head>
+<body>
+    <script>
+ENGLISH_VERBS = [
+'be',
+'have',
+'do',
+'say',
+'go',
+'make',
+'know',
+'think',
+'take',
+'see'
+];
+
+ITALIAN_VERBS = [
+['essere', true],
+['avere', true],
+['fare', true],
+['parlare', false],
+['andare', false],
+['fare', true],
+['sapere', true],
+['pensare', false],
+['prendere', false],
+['vedere', true]
+['bere', true]
+];
+
+IRREGULAR_CONJUGATIONS = {
+   'essere': ['sono', 'sei', 'e', 'siamo', 'siete', 'sono'],
+   'avere': ['ho', 'hai', 'ha', 'abbiamo', 'avete', 'hanno'],
+   'fare': ['faccio', 'fai', 'fa', 'facciamo', 'fate', 'fanno'],
+   'sapere': ['so', 'sai', 'sa', 'sappiamo', 'sapete', 'sanno'],
+   'bere': ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'],
+};
+
+        const PRONOUNS = ['I', 'you', 'he/she', 'we', 'you (plural)', 'they']
+        const suffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
+        function checkAnswer(verbIndex, pronounIndex, answer) {
+            const [verb, irregular] = ITALIAN_VERBS[verbIndex] 
+            const verbWithoutSuffix = verb.replace(/are$/, '')
+            let expectedAnswer = verbWithoutSuffix + suffixes
+            [pronounIndex]
+            if (irregular) {
+                expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex]
+            }
+            if (answer == expectedAnswer) {
+                return true
+            }
+            return false
+        }
+    </script>
+    <main class="p-2" x-data="{ selected: null }">
+        <h2 class="title">select what you want to practice</h2>
+        <button class="button is-link" @click="selected = 'verbs'">verbs</button>
+
+        <section class="content" x-show="selected == 'verbs'" x-data="{
+            chosenVerb: 0,
+            chosenPronoun: 0,
+            answer: '',
+            check() {
+                if (checkAnswer(this.chosenVerb, this.chosenPronoun, this.answer)) {alert('you are correct')
+                } else {
+                    alert('you are incorrect')
+                }
+            }
+        }"></br>
+            <dl>
+            <dt>You have chosen verb:</dt>
+            <dd><b x-text="ENGLISH_VERBS[chosenVerb]"></b></dd>
+            
+            <dt>and pronoun:</dt>
+            <dd><b x-text="PRONOUNS[chosenPronoun]"></b></dd>
+            
+            </dl>
+            <form @submit.prevent="check()">
+                <input required="required" class="input" type="text" x-model="answer" placeholder="your answer here...">
+                <button class="button is-info mt-2" type="submit">check answer</button>
+            </form>
+            <footer class="mt-2">
+            <button class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length)">choose again</button>
+            </footer>
+        </section>
+        <section x-show="selected == 'irregular'">
+            You have chosen irregular verbs
+        </section>
+    </main>
+</body>
+<script src="https://unpkg.com/alpinejs@3.13.8" defer></script>
