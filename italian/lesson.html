@@ -24,7 +24,10 @@ ENGLISH_VERBS = [
 'think',
 'take',
 'see',
-'drink'
+'drink',
+'find',
+'look for',
+'learn'
 ];
 
 ITALIAN_VERBS = [
@@ -38,7 +41,10 @@ ITALIAN_VERBS = [
 ['pensare', false],
 ['prendere', false],
 ['vedere', false],
-['bere', true]
+['bere', true],
+['trovare', false],
+['cercare', true],
+['imparare', false]
 ];
 
 IRREGULAR_CONJUGATIONS = {
@@ -84,7 +90,8 @@ IRREGULAR_CONJUGATIONS = {
             chosenPronoun: 0,
             answer: '',
             check() {
-                if (checkAnswer(this.chosenVerb, this.chosenPronoun, this.answer)) {alert('you are correct')
+                if (checkAnswer(this.chosenVerb, this.chosenPronoun, this.answer)) {
+                    alert('you are correct')
                 } else {
                     alert('you are incorrect')
                 }
@@ -99,11 +106,11 @@ IRREGULAR_CONJUGATIONS = {
             
             </dl>
             <form @submit.prevent="check()">
-                <input required="required" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" class="input" type="text" x-model="answer" placeholder="your answer here...">
+                <input required="required" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" class="input" type="text" x-model="answer" x-ref="answerInput" placeholder="your answer here...">
                 <button class="button is-info mt-2" type="submit">check answer</button>
             </form>
             <footer class="mt-2">
-            <button class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length)">choose again</button>
+            <button class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length); answer = ''; $refs.answerInput.focus()">choose again</button>
             </footer>
         </section>
         <section x-show="selected == 'irregular'">
