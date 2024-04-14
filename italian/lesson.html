@@ -13,6 +13,38 @@
 </head>
 <body>
     <script>
+
+ENGLISH_NOUNS = [
+    'backpack',
+    'shirt',
+    'croissant',
+    'coffee',
+    'cereal',
+    'pen',
+    'pencil',
+    'milk',
+    'table',
+    'garlic',
+    'egg',
+    'soup'
+];
+
+ITALIAN_NOUNS = [
+    ['zaino', false],
+    ['camicia', false],
+    ['cornetto', false],
+    ['caffe', false],
+    ['cereale', false],
+    ['penna', false],
+    ['matita', false],
+    ['latte', false],
+    ['tavolo', false],
+    ['formaggio', false],
+    ['aglio', false],
+    ['uovo', true],
+    ['zappa', false]
+];
+
 ENGLISH_VERBS = [
 'be',
 'have',
@@ -29,6 +61,10 @@ ENGLISH_VERBS = [
 'look for',
 'learn'
 ];
+
+IRREGULAR_NOUNS = {
+    'uovo': ['', '']
+}
 
 ITALIAN_VERBS = [
 ['essere', true],
@@ -55,26 +91,99 @@ IRREGULAR_CONJUGATIONS = {
    'bere': ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'],
 };
 
+        const ARTICLES = ['a', 'the']
         const PRONOUNS = ['I', 'you', 'he/she', 'we', 'you (plural)', 'they']
         const areSuffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
         const ereSuffixes = ['o', 'i', 'e', 'iamo', 'ete', 'ono']
+        function isVowel(character) {
+            if (character == "a" || character == "e" || character == "i" || character == "o" || character == "u") {
+                return true
+            } else {
+                return false
+            }
+        }
+        function isFeminine(noun) {
+            if (noun.match(/a$/)) {
+                return true
+            }
+            return false
+        }
+        function isMasculine(noun) {
+            if (noun.match(/o$/)) {
+                return true
+            }
+            return false
+        }
+        function masculineArticle(noun, article) {
+            // if the first leter is x, y, or z or the first 2 letters are consonants
+            let isSpecial = noun.match(/^(x|y|z)/) || (!isVowel(noun[0]) && !isVowel(noun[1]))
+            if (article == "a") {
+                if (isSpecial) {
+                    return "uno"
+                } else {
+                    return "un"
+                }
+            }
+            if (article == "the") {
+                if (isSpecial) {
+                    return "lo"
+                } else {
+                    return "il"
+                }
+            }
+        }
+        function feminineArticle(noun, article) {
+            let beginsWithVowel = isVowel(noun[0])
+            if (article == "a") {
+                if (beginsWithVowel) {
+                    return "un'"
+                } else {
+                    return "una"
+                }
+            }
+            if (article == "the") {
+                if (beginsWithVowel) {
+                    return "l'"
+                } else {
+                    return "la"
+                }
+            }
+        }
+
         function checkAnswer(verbIndex, pronounIndex, answer) {
-            const [verb, irregular] = ITALIAN_VERBS[verbIndex] 
+            const [verb, irregular] = ITALIAN_VERBS[verbIndex];
             let verbWithoutSuffix;
             let suffixes;
             if (verb.match(/are$/)) {
-                verbWithoutSuffix = verb.replace(/are$/, '')
-                suffixes = areSuffixes
+                verbWithoutSuffix = verb.replace(/are$/, '');
+                suffixes = areSuffixes;
             }
             if (verb.match(/ere$/)) {
-                verbWithoutSuffix = verb.replace(/ere$/, '')
-                suffixes = ereSuffixes
+                verbWithoutSuffix = verb.replace(/ere$/, '');
+                suffixes = ereSuffixes;
             }
-            let expectedAnswer = verbWithoutSuffix + suffixes
-            [pronounIndex]
+            let expectedAnswer = verbWithoutSuffix + suffixes[pronounIndex];
             if (irregular) {
-                expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex]
+                expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex];
             }
+            if (answer == expectedAnswer) {
+                return true
+            }
+            return false
+        }
+        function checkVocabAnswer(nounIndex, articleIndex, answer) {
+            const [noun, irregular] = ITALIAN_NOUNS[nounIndex];
+            let article = ARTICLES[articleIndex];
+            let italianArticle;
+            if (isFeminine(noun)) {
+                italianArticle = feminineArticle(noun, article);
+            } else if (isMasculine(noun)) {
+                italianArticle = masculineArticle(noun, article);
+            } else {
+                console.log("unable to work out article for %s", noun);
+            }
+            let expectedAnswer = italianArticle + " " + noun;
+            console.log("expectedAnswer %s", expectedAnswer)
             if (answer == expectedAnswer) {
                 return true
             }
@@ -84,6 +193,7 @@ IRREGULAR_CONJUGATIONS = {
     <main class="p-2" x-data="{ selected: null }">
         <h2 class="title">select what you want to practice</h2>
         <button class="button is-link" @click="selected = 'verbs'">verbs</button>
+        <button class="button is-link" @click="selected = 'vocab'">vocabulary</button>
 
         <section class="content" x-show="selected == 'verbs'" x-data="{
             chosenVerb: 0,
@@ -113,9 +223,36 @@ IRREGULAR_CONJUGATIONS = {
             <button class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length); answer = ''; $refs.answerInput.focus()">choose again</button>
             </footer>
         </section>
-        <section x-show="selected == 'irregular'">
-            You have chosen irregular verbs
+
+        <section class="content" x-show="selected == 'vocab'" x-data="{
+            chosenNoun: 0,
+            chosenArticle: 0,
+            answer: '',
+            check() {
+                if (checkVocabAnswer(this.chosenNoun, this.chosenArticle, this.answer)) {
+                    alert('you are correct')
+                } else {
+                    alert('you are incorrect')
+                }
+            }
+        }"></br>
+            <dl>
+            <dt>You have chosen noun:</dt>
+            <dd><b x-text="ENGLISH_NOUNS[chosenNoun]"></b></dd>
+            
+            <dt>and article:</dt>
+            <dd><b x-text="ARTICLES[chosenArticle]"></b></dd>
+            
+            </dl>
+            <form @submit.prevent="check()">
+                <input required="required" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off" class="input" type="text" x-model="answer" x-ref="answerInput" placeholder="your answer here...">
+                <button class="button is-info mt-2" type="submit">check answer</button>
+            </form>
+            <footer class="mt-2">
+            <button class="button is-warning" @click="chosenNoun = Math.floor(Math.random()*ENGLISH_NOUNS.length); chosenArticle = Math.floor(Math.random()*ARTICLES.length); answer = ''; $refs.answerInput.focus()">choose again</button>
+            </footer>
         </section>
+
     </main>
 </body>
 <script src="https://unpkg.com/alpinejs@3.13.8" defer></script>
