@@ -41,37 +41,39 @@ ITALIAN_NOUNS = [
     ['tavolo', false],
     ['formaggio', false],
     ['aglio', false],
-    ['uovo', true],
+    ['uovo', false],
     ['zappa', false]
 ];
 
 ENGLISH_VERBS = [
-'be',
-'have',
-'do',
-'say',
-'go',
-'make',
-'know',
-'think',
-'take',
-'see',
-'drink',
-'find',
-'look for',
-'learn'
+'to be',
+'to have',
+'to do',
+'to say',
+'to go',
+'to make',
+'to know',
+'to think',
+'to take',
+'to see',
+'to drink',
+'to find',
+'to look for',
+'to learn',
+'can/to be able to',
+'to want/desire',
+'to have to',
+'to exit/leave',
+'to say',
+'to arrive/approach'
 ];
-
-IRREGULAR_NOUNS = {
-    'uovo': ['', '']
-}
 
 ITALIAN_VERBS = [
 ['essere', true],
 ['avere', true],
 ['fare', true],
 ['parlare', false],
-['andare', false],
+['andare', true],
 ['fare', true],
 ['sapere', true],
 ['pensare', false],
@@ -80,7 +82,13 @@ ITALIAN_VERBS = [
 ['bere', true],
 ['trovare', false],
 ['cercare', true],
-['imparare', false]
+['imparare', false],
+['potere', true],
+['volere', true],
+['dovere', true],
+['uscire', true],
+['dire', true],
+['venire', true]
 ];
 
 IRREGULAR_CONJUGATIONS = {
@@ -89,7 +97,14 @@ IRREGULAR_CONJUGATIONS = {
    'fare': ['faccio', 'fai', 'fa', 'facciamo', 'fate', 'fanno'],
    'sapere': ['so', 'sai', 'sa', 'sappiamo', 'sapete', 'sanno'],
    'bere': ['bevo', 'bevi', 'beve', 'beviamo', 'bevete', 'bevono'],
-   'cercare': ['cerco', 'cerchi', 'cerca', 'cerchiamo', 'cercate', 'cercano']
+   'cercare': ['cerco', 'cerchi', 'cerca', 'cerchiamo', 'cercate', 'cercano'],
+   'andare': ['vado', 'vai', 'va', 'andiamo', 'andate', 'vanno'],
+   'potere': ['posso', 'puoi', 'puo', 'possiamo', 'potete', 'possono'],
+   'volere': ['voglio', 'vuoi', 'vuole', 'vogliamo', 'volete', 'vogliono'],
+   'dovere': ['devo', 'devi', 'deve', 'dobbiamo', 'dovete', 'devono'],
+   'uscire': ['esco', 'esci', 'esce', 'usciamo', 'uscite', 'escono'],
+   'dire': ['dico', 'dici', 'dice', 'diciamo', 'dite', 'dicono'],
+   'venire': ['vengo', 'vieni', 'viene', 'venianmo', 'venite', 'vengono']
 };
 
         const ARTICLES = ['a', 'the']
@@ -203,6 +218,8 @@ IRREGULAR_CONJUGATIONS = {
             check() {
                 if (checkAnswer(this.chosenVerb, this.chosenPronoun, this.answer)) {
                     alert('you are correct')
+                    const chooseAgainBtn = document.getElementById('chooseAgainBtn');
+                    chooseAgainBtn.click();
                 } else {
                     alert('you are incorrect')
                 }
@@ -221,7 +238,7 @@ IRREGULAR_CONJUGATIONS = {
                 <button class="button is-info mt-2" type="submit">check answer</button>
             </form>
             <footer class="mt-2">
-            <button class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length); answer = ''; $refs.answerInput.focus()">choose again</button>
+            <button id="chooseAgainBtn" class="button is-warning" @click="chosenVerb = Math.floor(Math.random()*ENGLISH_VERBS.length); chosenPronoun = Math.floor(Math.random()*PRONOUNS.length); answer = ''; $refs.answerInput.focus()">choose again</button>
             </footer>
         </section>
 
