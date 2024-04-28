@@ -14,44 +14,36 @@
 <body>
     <script>
 
-ENGLISH_NOUNS = [
-    'backpack',
-    'shirt',
-    'croissant',
-    'coffee',
-    'cereal',
-    'pen',
-    'pencil',
-    'milk',
-    'table',
-    'garlic',
-    'egg',
-    'soup'
+NOUNS = [
+    ['backpack', 'zaino', 'm', false],
+    ['shirt', 'camicia', 'f', false],
+    ['croissant', 'cornetto', 'm', false],
+    ['coffee', 'caffe', 'm', true],
+    ['cereal', 'ceriale', 'm', false],
+    ['pen', 'penna', 'f', false],
+    ['pencil', 'matita', 'f', false],
+    ['milk', 'latte', 'm', true],
+    ['table', 'tavolo', 'm', false],
+    ['garlic', 'aglio', 'f', false],
+    ['egg', 'uovo', 'm', true],
+    ['soup', 'zuppa', 'f', false],
+    ['station', 'stazione', 'f', false]
 ];
 
-ITALIAN_NOUNS = [
-    ['zaino', false],
-    ['camicia', false],
-    ['cornetto', false],
-    ['caffe', false],
-    ['cereale', false],
-    ['penna', false],
-    ['matita', false],
-    ['latte', false],
-    ['tavolo', false],
-    ['formaggio', false],
-    ['aglio', false],
-    ['uovo', false],
-    ['zappa', false]
-];
+
+IRREGULAR_NOUNS_PLURALS = {
+    'caffe': ['caffe'],
+    'latte': ['latte'],
+    'uovo': ['uova']
+};
+
 
 ENGLISH_VERBS = [
 'to be',
 'to have',
-'to do',
+'to do/to make',
 'to say',
 'to go',
-'to make',
 'to know',
 'to think',
 'to take',
@@ -65,7 +57,9 @@ ENGLISH_VERBS = [
 'to have to',
 'to exit/leave',
 'to say',
-'to arrive/approach'
+'to arrive/approach/come',
+'to sell',
+'to enter'
 ];
 
 ITALIAN_VERBS = [
@@ -74,7 +68,6 @@ ITALIAN_VERBS = [
 ['fare', true],
 ['parlare', false],
 ['andare', true],
-['fare', true],
 ['sapere', true],
 ['pensare', false],
 ['prendere', false],
@@ -88,7 +81,9 @@ ITALIAN_VERBS = [
 ['dovere', true],
 ['uscire', true],
 ['dire', true],
-['venire', true]
+['venire', true],
+['vendere', false],
+['entrare', false]
 ];
 
 IRREGULAR_CONJUGATIONS = {
@@ -111,6 +106,7 @@ IRREGULAR_CONJUGATIONS = {
         const PRONOUNS = ['I', 'you', 'he/she', 'we', 'you (plural)', 'they']
         const areSuffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
         const ereSuffixes = ['o', 'i', 'e', 'iamo', 'ete', 'ono']
+
         function isVowel(character) {
             if (character == "a" || character == "e" || character == "i" || character == "o" || character == "u") {
                 return true
@@ -118,21 +114,11 @@ IRREGULAR_CONJUGATIONS = {
                 return false
             }
         }
-        function isFeminine(noun) {
-            if (noun.match(/a$/)) {
-                return true
-            }
-            return false
-        }
-        function isMasculine(noun) {
-            if (noun.match(/o$/)) {
-                return true
-            }
-            return false
-        }
+
         function masculineArticle(noun, article) {
             // if the first leter is x, y, or z or the first 2 letters are consonants
             let isSpecial = noun.match(/^(x|y|z)/) || (!isVowel(noun[0]) && !isVowel(noun[1]))
+            let beginsWithVowel = isVowel(noun[0])
             if (article == "a") {
                 if (isSpecial) {
                     return "uno"
@@ -143,6 +129,8 @@ IRREGULAR_CONJUGATIONS = {
             if (article == "the") {
                 if (isSpecial) {
                     return "lo"
+                } else if (beginsWithVowel) {
+                    return "l'"
                 } else {
                     return "il"
                 }
@@ -166,6 +154,23 @@ IRREGULAR_CONJUGATIONS = {
             }
         }
 
+        function checkVocabAnswer(nounIndex, articleIndex, answer) {
+            const [englishNoun, italianNoun, gender, irregular] = NOUNS[nounIndex];
+            let article = ARTICLES[articleIndex];
+            let italianArticle;
+            if (gender == 'f') {
+                italianArticle = feminineArticle(italianNoun, article);
+            } else {
+                italianArticle = masculineArticle(italianNoun, article);
+            }
+            let expectedAnswer = italianArticle + " " + italianNoun;
+            console.log("expectedAnswer %s", expectedAnswer)
+            if (answer == expectedAnswer) {
+                return true
+            }
+            return false
+        }
+
         function checkAnswer(verbIndex, pronounIndex, answer) {
             const [verb, irregular] = ITALIAN_VERBS[verbIndex];
             let verbWithoutSuffix;
@@ -182,24 +187,6 @@ IRREGULAR_CONJUGATIONS = {
             if (irregular) {
                 expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex];
             }
-            if (answer == expectedAnswer) {
-                return true
-            }
-            return false
-        }
-        function checkVocabAnswer(nounIndex, articleIndex, answer) {
-            const [noun, irregular] = ITALIAN_NOUNS[nounIndex];
-            let article = ARTICLES[articleIndex];
-            let italianArticle;
-            if (isFeminine(noun)) {
-                italianArticle = feminineArticle(noun, article);
-            } else if (isMasculine(noun)) {
-                italianArticle = masculineArticle(noun, article);
-            } else {
-                console.log("unable to work out article for %s", noun);
-            }
-            let expectedAnswer = italianArticle + " " + noun;
-            console.log("expectedAnswer %s", expectedAnswer)
             if (answer == expectedAnswer) {
                 return true
             }
@@ -249,6 +236,8 @@ IRREGULAR_CONJUGATIONS = {
             check() {
                 if (checkVocabAnswer(this.chosenNoun, this.chosenArticle, this.answer)) {
                     alert('you are correct')
+                    const chooseNounBtn = document.getElementById('chooseNounBtn');
+                    chooseNounBtn.click();
                 } else {
                     alert('you are incorrect')
                 }
@@ -256,7 +245,7 @@ IRREGULAR_CONJUGATIONS = {
         }"></br>
             <dl>
             <dt>You have chosen noun:</dt>
-            <dd><b x-text="ENGLISH_NOUNS[chosenNoun]"></b></dd>
+            <dd><b x-text="NOUNS[chosenNoun][0]"></b></dd>
             
             <dt>and article:</dt>
             <dd><b x-text="ARTICLES[chosenArticle]"></b></dd>
@@ -267,7 +256,7 @@ IRREGULAR_CONJUGATIONS = {
                 <button class="button is-info mt-2" type="submit">check answer</button>
             </form>
             <footer class="mt-2">
-            <button class="button is-warning" @click="chosenNoun = Math.floor(Math.random()*ENGLISH_NOUNS.length); chosenArticle = Math.floor(Math.random()*ARTICLES.length); answer = ''; $refs.answerInput.focus()">choose again</button>
+            <button id="chooseNounBtn" class="button is-warning" @click="chosenNoun = Math.floor(Math.random()*NOUNS.length); chosenArticle = Math.floor(Math.random()*ARTICLES.length); answer = ''; $refs.answerInput.focus()">choose again</button>
             </footer>
         </section>
 
