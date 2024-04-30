@@ -24,7 +24,7 @@ NOUNS = [
     ['pencil', 'matita', 'f', false],
     ['milk', 'latte', 'm', true],
     ['table', 'tavolo', 'm', false],
-    ['garlic', 'aglio', 'f', false],
+    ['garlic', 'aglio', 'm', false],
     ['egg', 'uovo', 'm', true],
     ['soup', 'zuppa', 'f', false],
     ['station', 'stazione', 'f', false]
@@ -102,7 +102,7 @@ IRREGULAR_CONJUGATIONS = {
    'venire': ['vengo', 'vieni', 'viene', 'venianmo', 'venite', 'vengono']
 };
 
-        const ARTICLES = ['a', 'the']
+        const ARTICLES = ['a', 'the', 'plural']
         const PRONOUNS = ['I', 'you', 'he/she', 'we', 'you (plural)', 'they']
         const areSuffixes = ['o', 'i', 'a', 'iamo', 'ate', 'ano']
         const ereSuffixes = ['o', 'i', 'e', 'iamo', 'ete', 'ono']
@@ -135,6 +135,13 @@ IRREGULAR_CONJUGATIONS = {
                     return "il"
                 }
             }
+            if (article == "plural") {
+                if (isSpecial || beginsWithVowel) {
+                    return "gli"
+                } else {
+                    return "i"
+                }
+            }
         }
         function feminineArticle(noun, article) {
             let beginsWithVowel = isVowel(noun[0])
@@ -152,18 +159,46 @@ IRREGULAR_CONJUGATIONS = {
                     return "la"
                 }
             }
+            if (article == "plural") {
+                    return "le"
+            }
+        }
+
+        function pluralFeminineNoun(noun) {
+            let endsinE = noun.match(/e$/)
+            let endsinA = noun.match(/a$/)
+            if (endsinE) {
+                return noun.replace(/\w$/, 'i');
+            }
+            if (endsinA) {
+                return noun.replace(/\w$/, 'e');
+            }
+        }
+        function pluralMasculineNoun(noun) {
+            return noun.replace(/\w$/, 'i');
         }
 
         function checkVocabAnswer(nounIndex, articleIndex, answer) {
-            const [englishNoun, italianNoun, gender, irregular] = NOUNS[nounIndex];
+            let [englishNoun, italianNoun, gender, irregular] = NOUNS[nounIndex];
             let article = ARTICLES[articleIndex];
             let italianArticle;
             if (gender == 'f') {
                 italianArticle = feminineArticle(italianNoun, article);
+                if (article == "plural") {
+                    italianNoun = pluralFeminineNoun(italianNoun)
+                }
             } else {
                 italianArticle = masculineArticle(italianNoun, article);
+                if (article == "plural") {
+                    italianNoun = pluralMasculineNoun(italianNoun)
+                }
             }
-            let expectedAnswer = italianArticle + " " + italianNoun;
+            let expectedAnswer
+            if (italianArticle == "un'" || italianArticle == "l'") {
+                expectedAnswer = italianArticle + italianNoun;
+            } else {
+                expectedAnswer = italianArticle + " " + italianNoun;
+            }
             console.log("expectedAnswer %s", expectedAnswer)
             if (answer == expectedAnswer) {
                 return true
