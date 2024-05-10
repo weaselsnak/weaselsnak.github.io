@@ -1,6 +1,6 @@
 <!doctype html>
 <head>
-<title>Italian Practice</title>
+<title>Italian</title>
 <link rel="apple-touch-icon" href="/italian/italian-icon.png">
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -14,6 +14,39 @@
 <body>
     <script>
 
+ADEJECTIVES = [
+    'caro',
+    'stagionato',
+    'biologico',
+    'secco',
+    'surgelato',
+    'bianco',
+    'affumicato',
+    'crudo',
+    'cotto',
+    'freddo',
+    'caldo',
+    'scremato',
+    'giallo',
+    'al sangue',
+    'ben cotta',
+    'di media cottura',
+    'mista',
+    'salutare',
+    'mancante'
+]
+
+PHRASES = [
+    'puoi ripetere, per favore?',
+    'come si scrive?',
+    'che significa?',
+    'come si dice?',
+    'io ho una domanda',
+    `qual'è il tuo fruitto preferito?`,
+    'che cosa mangi a pranzo durante la settimana',
+    'qual e la tua cucina preferita'
+    ]
+    
 NOUNS = [
     ['backpack', 'zaino', 'm', false],
     ['shirt', 'camicia', 'f', false],
@@ -27,7 +60,26 @@ NOUNS = [
     ['garlic', 'aglio', 'm', false],
     ['egg', 'uovo', 'm', true],
     ['soup', 'zuppa', 'f', false],
-    ['station', 'stazione', 'f', false]
+    ['station', 'stazione', 'f', false],
+    ['apple', 'mela', 'f', false],
+    ['garden', 'giardino' ,'m', false],
+    ['night', 'notte' ,'f', false],
+    ['ice cream', 'gelato' ,'m', false],
+    ['day', 'giorno' ,'m', false],
+    ['dolphin', 'delfino' ,'m', false],
+    ['wardrobe', 'armadio' ,'m', false],
+    ['tiger', 'tigre' ,'f', false],
+    ['mouse', 'topo' ,'m', false],
+    ['hand', 'mano' ,'f', false],
+    ['photo', 'foto' ,'f', false],
+    ['radio', 'radio' ,'f', false],
+    ['motorobike', 'moto' ,'f', false],
+    ['rule', 'regola' ,'f', false],
+    ['lesson', 'lezione', 'f', false],
+    ['cow', 'mucca', 'f', false],
+    ['lion', 'leone', 'm', false],
+    ['parsley', 'prezzemolo', 'm', false]
+
 ];
 
 
@@ -59,7 +111,10 @@ ENGLISH_VERBS = [
 'to say',
 'to arrive/approach/come',
 'to sell',
-'to enter'
+'to enter',
+'to pay for',
+'to run',
+'to prefer/favourite'
 ];
 
 ITALIAN_VERBS = [
@@ -83,7 +138,10 @@ ITALIAN_VERBS = [
 ['dire', true],
 ['venire', true],
 ['vendere', false],
-['entrare', false]
+['entrare', false],
+['pagare', true],
+['correre', false],
+['preferito', true]
 ];
 
 IRREGULAR_CONJUGATIONS = {
@@ -99,7 +157,9 @@ IRREGULAR_CONJUGATIONS = {
    'dovere': ['devo', 'devi', 'deve', 'dobbiamo', 'dovete', 'devono'],
    'uscire': ['esco', 'esci', 'esce', 'usciamo', 'uscite', 'escono'],
    'dire': ['dico', 'dici', 'dice', 'diciamo', 'dite', 'dicono'],
-   'venire': ['vengo', 'vieni', 'viene', 'venianmo', 'venite', 'vengono']
+   'venire': ['vengo', 'vieni', 'viene', 'venianmo', 'venite', 'vengono'],
+   'pagare': ['page', 'paghi', 'paghia', 'paghiamo', 'pagate', 'pagano'],
+   'preferito': ['preferisco', 'preferisci', 'preferisce', 'preferiamo', 'preferite', 'preferiscono']
 };
 
         const ARTICLES = ['a', 'the', 'plural']
@@ -199,7 +259,7 @@ IRREGULAR_CONJUGATIONS = {
             } else {
                 expectedAnswer = italianArticle + " " + italianNoun;
             }
-            console.log("expectedAnswer %s", expectedAnswer)
+            console.log("expected answer %s", expectedAnswer)
             if (answer == expectedAnswer) {
                 return true
             }
@@ -222,6 +282,7 @@ IRREGULAR_CONJUGATIONS = {
             if (irregular) {
                 expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex];
             }
+            console.log("expected answer %s",expectedAnswer)
             if (answer == expectedAnswer) {
                 return true
             }
@@ -232,6 +293,7 @@ IRREGULAR_CONJUGATIONS = {
         <h2 class="title">select what you want to practice</h2>
         <button class="button is-link" @click="selected = 'verbs'">verbs</button>
         <button class="button is-link" @click="selected = 'vocab'">vocabulary</button>
+        <button class="button is-link" @click="selected = 'phrases'">phrases</button>
 
         <section class="content" x-show="selected == 'verbs'" x-data="{
             chosenVerb: 0,
@@ -292,6 +354,19 @@ IRREGULAR_CONJUGATIONS = {
             </form>
             <footer class="mt-2">
             <button id="chooseNounBtn" class="button is-warning" @click="chosenNoun = Math.floor(Math.random()*NOUNS.length); chosenArticle = Math.floor(Math.random()*ARTICLES.length); answer = ''; $refs.answerInput.focus()">choose again</button>
+            </footer>
+        </section>
+
+        <section class="content" x-show="selected == 'phrases'" x-data="{
+            chosenPhrase: 0,
+        }"></br>
+            <dl>
+            <dt>You have chosen phrase:</dt>
+            <dd><b x-text="PHRASES[chosenPhrase]"></b></dd>
+            
+            </dl>
+            <footer class="mt-2">
+            <button class="button is-warning" @click="chosenPhrase = Math.floor(Math.random()*PHRASES.length);">choose again</button>
             </footer>
         </section>
 
