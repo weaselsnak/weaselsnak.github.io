@@ -278,9 +278,11 @@ IRREGULAR_CONJUGATIONS = {
                 verbWithoutSuffix = verb.replace(/ere$/, '');
                 suffixes = ereSuffixes;
             }
-            let expectedAnswer = verbWithoutSuffix + suffixes[pronounIndex];
+            let expectedAnswer;
             if (irregular) {
                 expectedAnswer = IRREGULAR_CONJUGATIONS[verb][pronounIndex];
+            } else {
+                expectedAnswer = verbWithoutSuffix + suffixes[pronounIndex]
             }
             console.log("expected answer %s",expectedAnswer)
             if (answer == expectedAnswer) {
